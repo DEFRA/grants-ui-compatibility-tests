@@ -1,98 +1,66 @@
-grants-ui-compatibility-tests
+# grants-ui-compatibility-tests
 
-The template to create a service that runs WDIO tests against an environment.
+This is the cross-browser compatibility test suite for non-land based grant application journeys maintained by Grant Application Enablement (GAE) team. The test suite uses BrowserStack and WebdriverIO to run tests against the following browsers:
 
-- [Local](#local)
-  - [Requirements](#requirements)
-    - [Node.js](#nodejs)
-  - [Setup](#setup)
-  - [Running local tests](#running-local-tests)
-  - [Debugging local tests](#debugging-local-tests)
-- [Production](#production)
-  - [Debugging tests](#debugging-tests)
-- [Licence](#licence)
-  - [About the licence](#about-the-licence)
+- Windows 11
+  - Chrome
+  - Edge
+  - Firefox
+- Mac OS X Sequoia
+  - Chrome
+  - Safari
+  - Firefox
+- Mac OS X Monterey
+  - Safari 15.6
+- iOS on iPhone 16
+  - Chrome
+  - Safari
+- Android on Samsung Galaxy S23
+  - Chrome
+  - Samsung Internet
 
-## Local Development
+The supported browsers are the latest versions and follow the recommendations for government services given here: https://www.gov.uk/service-manual/technology/designing-for-different-browsers-and-devices.
 
-### Requirements
+The browsers are defined as WDIO capabilities in file [wdio.browserstack.capabilities.js](wdio.browserstack.capabilities.js) which is shared between WDIO conf files.
 
-#### Node.js
+## Capturing Snapshots
 
-Please install [Node.js](http://nodejs.org/) `>= v20` and [npm](https://nodejs.org/) `>= v9`. You will find it
-easier to use the Node Version Manager [nvm](https://github.com/creationix/nvm)
+The test suites supports the following QA process:
 
-To use the correct version of Node.js for this application, via nvm:
+- Journeys are manually verified to work correctly and match the UCD design using BrowserStack using each supported browser.
 
-```bash
-nvm use
-```
+- Journeys are captured as individual page snapshots by running the test suite locally against BrowserStack. This will capture any missing snapshots which are then committed to source control. Any intentionally changed pages should have their snapshots deleted and regenerated using this method.
 
-### Setup
+- The test suite can then be run in the CDP Portal against the latest versions of journeys to ensure unexpected UI changes have not been introduced.
 
-Install application dependencies:
 
-```bash
-npm install
-```
+## Running the test suite
 
-### Running local tests
-
-Start application you are testing on the url specified in `baseUrl` [wdio.local.conf.js](wdio.local.conf.js)
+There are 3 WebdriverIO config files, each used with its own command:
 
 ```bash
+wdio.local.conf.js
+------------------
+# Used to run tests locally against a local instance of Chrome
 npm run test:local
 ```
 
-### Debugging local tests
-
 ```bash
-npm run test:local:debug
+wdio.local.browserstack.conf.js
+-------------------------------
+# Used to run tests locally against BrowserStack. The BrowserStackLocal service or binary must be used.
+BROWSERSTACK_USERNAME=your-username BROWSERSTACK_KEY=your-key npm run test:local:browserstack
 ```
 
-## Production
+```bash
+wdio.browserstack.conf.js
+-------------------------
+# Used to run tests in the portal against BrowserStack. The BrowserStackLocal service or binary must be used.
 
-### Running the tests
+#Run in the CDP Portal
+```
 
-Tests are run from the CDP-Portal under the Test Suites section. Before any changes can be run, a new docker image must be built, this will happen automatically when a pull request is merged into the `main` branch.
-You can check the progress of the build under the actions section of this repository. Builds typically take around 1-2 minutes.
-
-The results of the test run are made available in the portal.
-
-## Requirements of CDP Environment Tests
-
-1. Your service builds as a docker container using the `.github/workflows/publish.yml`
-   The workflow tags the docker images allowing the CDP Portal to identify how the container should be run on the platform.
-   It also ensures its published to the correct docker repository.
-
-2. The Dockerfile's entrypoint script should return exit code of 0 if the test suite passes or 1/>0 if it fails
-
-3. Test reports should be published to S3 using the script in `./bin/publish-tests.sh`
-
-## Running on GitHub
-
-Alternatively you can run the test suite as a GitHub workflow.
-Test runs on GitHub are not able to connect to the CDP Test environments. Instead, they run the tests agains a version of the services running in docker.
-A docker compose `compose.yml` is included as a starting point, which includes the databases (mongodb, redis) and infrastructure (localstack) pre-setup.
-
-Steps:
-
-1. Edit the compose.yml to include your services.
-2. Modify the scripts in docker/scripts to pre-populate the database, if required and create any localstack resources.
-3. Test the setup locally with `docker compose up` and `npm run test:github`
-4. Set up the workflow trigger in `.github/workflows/journey-tests`.
-
-By default, the provided workflow will run when triggered manually from GitHub or when triggered by another workflow.
-
-If you want to use the repository exclusively for running docker composed based test suites consider displaying the publish.yml workflow.
-
-## BrowserStack
-
-Two wdio configuration files are provided to help run the tests using BrowserStack in both a GitHub workflow (`wdio.github.browserstack.conf.js`) and from the CDP Portal (`wdio.browserstack.conf.js`).
-They can be run from npm using the `npm run test:browserstack` (for running via portal) and `npm run test:github:browserstack` (from GitHib runner).
-See the CDP Documentation for more details.
-
-## Licence
+### Licence
 
 THIS INFORMATION IS LICENSED UNDER THE CONDITIONS OF THE OPEN GOVERNMENT LICENCE found at:
 
@@ -102,7 +70,7 @@ The following attribution statement MUST be cited in your products and applicati
 
 > Contains public sector information licensed under the Open Government licence v3
 
-### About the licence
+#### About the licence
 
 The Open Government Licence (OGL) was developed by the Controller of Her Majesty's Stationery Office (HMSO) to enable
 information providers in the public sector to license the use and re-use of their information under a common open

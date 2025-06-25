@@ -1,73 +1,37 @@
 import fs from 'node:fs'
 import { ProxyAgent, setGlobalDispatcher } from 'undici'
 import { bootstrap } from 'global-agent'
+import { browserStackCapabilities } from './wdio.browserstack.capabilities.js'
 
-/**
- * Enable webdriver.io to use the outbound proxy.
- * This is required for the test suite to be able to talk to BrowserStack.
- */
-if (process.env.HTTP_PROXY) {
-  const dispatcher = new ProxyAgent({
-    uri: process.env.HTTP_PROXY
-  })
-  setGlobalDispatcher(dispatcher)
-  bootstrap()
-  global.GLOBAL_AGENT.HTTP_PROXY = process.env.HTTP_PROXY
-}
-
-const oneMinute = 60 * 1000
+const dispatcher = new ProxyAgent({
+  uri: 'http://localhost:3128'
+})
+setGlobalDispatcher(dispatcher)
+bootstrap()
+global.GLOBAL_AGENT.HTTP_PROXY = 'http://localhost:3128'
 
 export const config = {
-  //
-  // ====================
-  // Runner Configuration
-  // ====================
-  // WebdriverIO supports running e2e tests as well as unit and component tests.
-  runner: 'local',
-  //
-  // Set a base URL in order to shorten url command calls. If your `url` parameter starts
-  // with `/`, the base url gets prepended, not including the path portion of your baseUrl.
-  // If your `url` parameter starts without a scheme or `/` (like `some/path`), the base url
-  // gets prepended directly.
-  baseUrl: `https://grants-ui-compatibility-tests.${process.env.ENVIRONMENT}.cdp-int.defra.cloud`,
-
-  // You will need to provide your own BrowserStack credentials.
-  // These should be added as secrets to the test suite.
   user: process.env.BROWSERSTACK_USERNAME,
   key: process.env.BROWSERSTACK_KEY,
-
-  // Tests to run
-  specs: ['./test/specs/**/*.js'],
-  // Tests to exclude
+  baseUrl: `https://grants-ui.${process.env.ENVIRONMENT}.cdp-int.defra.cloud`,
+  runner: 'local',
+  specs: ['./test/specs/*.js'],
   exclude: [],
-  maxInstances: 1,
-
+  maxInstances: 10,
   commonCapabilities: {
     'bstack:options': {
-      buildName: `grants-ui-compatibility-tests-${process.env.ENVIRONMENT}` // configure as required
+      buildName: `grants-ui-compatibility-tests-${process.env.ENVIRONMENT}`
     }
   },
-
-  capabilities: [
-    {
-      browserName: 'Chrome', // Set as required
-      'bstack:options': {
-        browserVersion: 'latest',
-        os: 'Windows',
-        osVersion: '11'
-      }
-    }
-  ],
-
+  capabilities: browserStackCapabilities,
   services: [
     [
-      'browserstack',
-      {
-        testObservability: true, // Disable if you do not want to use the browserstack test observer functionality
+      'browserstack', {
+        testObservability: true,
         testObservabilityOptions: {
-          user: process.env.BROWSERSTACK_USER,
+          user: process.env.BROWSERSTACK_USERNAME,
           key: process.env.BROWSERSTACK_KEY,
-          projectName: 'cdp-node-env-test-suite', // should match project in browserstack
+          projectName: 'grants-ui-compatibility-tests',
           buildName: `grants-ui-compatibility-tests-${process.env.ENVIRONMENT}`
         },
         acceptInsecureCerts: true,
@@ -78,25 +42,26 @@ export const config = {
           proxyPort: 3128
         }
       }
+    ],
+    [
+      "visual", {
+        formatImageName: "{logName}-{tag}-{width}x{height}",
+        savePerInstance: true,
+      }
     ]
   ],
-
-  execArgv: ['--loader', 'esm-module-alias/loader'],
-
   logLevel: 'info',
-
-  // Number of failures before the test suite bails.
+  logLevels: {
+    webdriver: 'error'
+  },
   bail: 0,
   waitforTimeout: 10000,
   waitforInterval: 200,
-  connectionRetryTimeout: 6000,
+  connectionRetryTimeout: 120000,
   connectionRetryCount: 3,
-
   framework: 'mocha',
-
   reporters: [
     [
-      // Spec reporter provides rolling output to the logger so you can see it in-progress
       'spec',
       {
         addConsoleLogs: true,
@@ -105,32 +70,22 @@ export const config = {
       }
     ],
     [
-      // Allure is used to generate the final HTML report
       'allure',
       {
         outputDir: 'allure-results'
       }
     ]
   ],
-
-  // Options to be passed to Mocha.
-  // See the full list at http://mochajs.org/
   mochaOpts: {
     ui: 'bdd',
-    timeout: oneMinute
+    timeout: 600000,
+    bail: true
   },
-
-  // Hooks
-  afterTest: async function (
-    test,
-    context,
-    { error, result, duration, passed, retries }
-  ) {
+  afterTest: async function (test, context, { error, result, duration, passed, retries }) {
     if (error) {
       await browser.takeScreenshot()
     }
   },
-
   onComplete: function (exitCode, config, capabilities, results) {
     // !Do Not Remove! Required for test status to show correctly in portal.
     if (results?.failed && results.failed > 0) {
