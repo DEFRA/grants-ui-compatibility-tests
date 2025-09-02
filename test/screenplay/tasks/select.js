@@ -1,19 +1,22 @@
+import SelectAutocompleteField from "./select-autocomplete-field.js"
+import SelectCheckbox from "./select-checkbox.js"
+import SelectDropdown from "./select-dropdown.js"
+import SelectRadio from "./select-radio"
+
 export default class Select {
-    constructor(options) {
-        this.options = options
+    static autocompleteField() {
+        return new SelectAutocompleteField()
+    }
+    
+    static checkbox() {
+        return new SelectCheckbox()
     }
 
-    static option(option) {
-        return new Select([option])
+    static dropdown() {
+        return new SelectDropdown()
     }
 
-    static options(...options) {
-        return new Select(options)
-    }
-
-    async perform() {
-        for (const option of this.options) {
-            await $(`aria/${option}`).click()
-        }
+    static radio() {
+        return new SelectRadio()
     }
 }

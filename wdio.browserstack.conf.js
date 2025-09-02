@@ -14,10 +14,11 @@ export const config = {
   user: process.env.BROWSERSTACK_USERNAME,
   key: process.env.BROWSERSTACK_KEY,
   baseUrl: `https://grants-ui.${process.env.ENVIRONMENT}.cdp-int.defra.cloud`,
+  baseBackendUrl: `https://grants-ui-backend.${process.env.ENVIRONMENT}.cdp-int.defra.cloud`,
   runner: 'local',
-  specs: ['./test/specs/*.js'],
+  specs: ['./test/specs/*.spec.js'],
   exclude: [],
-  maxInstances: 10,
+  maxInstances: 12,
   commonCapabilities: {
     'bstack:options': {
       buildName: `grants-ui-compatibility-tests-${process.env.ENVIRONMENT}`

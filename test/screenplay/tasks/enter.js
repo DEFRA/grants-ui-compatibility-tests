@@ -1,18 +1,22 @@
+import EnterDatePartsField from "./enter-date-parts-field.js"
+import EnterMonthYearField from "./enter-month-year-field.js"
+import EnterTextarea from "./enter-textarea.js"
+import EnterTextbox from "./enter-textbox.js"
+
 export default class Enter {
-    constructor(value) {
-        this.value = value
+    static datePartsField() {
+        return new EnterDatePartsField()
     }
 
-    static value(value) {
-        return new Enter(value)
+    static monthYearField() {
+        return new EnterMonthYearField()
     }
 
-    for(label) {
-        this.label = label
-        return this
+    static textarea() {
+        return new EnterTextarea()
     }
 
-    async perform() {
-        await $(`//label[contains(text(),'${this.label}')]/following::input[1]`).setValue(this.value)
+    static textbox() {
+        return new EnterTextbox()
     }
 }

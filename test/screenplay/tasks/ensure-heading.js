@@ -1,13 +1,13 @@
 export default class EnsureHeading {
-    is(expectation) {
-        this.expectation = expectation
+    is(heading) {
+        this.heading = heading
         return this
     }
 
     async perform() {
-        if (this.expectation.indexOf("'") > -1) {
-            this.expectation = this.expectation.substring(0, this.expectation.indexOf("'"))
+        if (this.heading.indexOf("'") > -1) {
+            this.heading = this.heading.substring(0, this.heading.indexOf("'"))
         }
-        await expect($(`//h1[contains(text(),'${this.expectation}')]`)).toBeDisplayed()
+        await expect($(`//h1[contains(text(),'${this.heading}')]`)).toBeDisplayed()
     }
 }

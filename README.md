@@ -42,6 +42,12 @@ There are 3 WebdriverIO config files, each used with its own command:
 wdio.local.conf.js
 ------------------
 # Used to run tests locally against a local instance of Chrome
+
+# you must provide the following environment variables in the command or in your environment, e.g. in an .env file
+# ENVIRONMENT
+# DEFRA_ID_USER_PASSWORD
+# GRANTS_UI_BACKEND_AUTH_TOKEN
+# GRANTS_UI_BACKEND_ENCRYPTION_KEY
 npm run test:local
 ```
 
@@ -49,7 +55,16 @@ npm run test:local
 wdio.local.browserstack.conf.js
 -------------------------------
 # Used to run tests locally against BrowserStack. The BrowserStackLocal service or binary must be used.
-BROWSERSTACK_USERNAME=your-username BROWSERSTACK_KEY=your-key npm run test:local:browserstack
+
+# you must provide the following environment variables in the command or in your environment, e.g. in an .env file
+# ENVIRONMENT
+# DEFRA_ID_USER_PASSWORD
+# GRANTS_UI_BACKEND_AUTH_TOKEN
+# GRANTS_UI_BACKEND_ENCRYPTION_KEY
+# BROWSERSTACK_USERNAME
+# BROWSERSTACK_KEY
+
+npm run test:local:browserstack
 ```
 
 ```bash
