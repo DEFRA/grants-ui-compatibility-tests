@@ -120,6 +120,12 @@ export const browserStackCapabilities = [
       deviceOrientation: 'portrait',
       deviceName: 'iPhone 16',
       osVersion: '18'
+    },
+    'goog:chromeOptions': {
+      'prefs': {
+        'credentials_enable_service': false,
+        'profile.password_manager_leak_detection': false
+      }
     }
   },
   {
