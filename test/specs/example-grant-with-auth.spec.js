@@ -15,9 +15,12 @@ import Start from '../screenplay/tasks/start.js'
 describe('example-grant-with-auth', () => {
     const agent = new Actor()
 
+    before(async () => {
+        await deleteApplicationState(getSbi(), getCrn(), 'example-grant-with-auth')
+    })
+
     beforeEach(async () => {
         addAllureArgument('logName', browser.options.capabilities['wdio-ics:options'].logName)
-        await deleteApplicationState(getSbi(), getCrn(), 'example-grant-with-auth')
     })
 
     it('start', async () => {
@@ -164,10 +167,12 @@ describe('example-grant-with-auth', () => {
     })
 
     it('summary', async () => {
+        const datePartsFieldValueXPath = `//dt[contains(text(),'Date')]/following-sibling::dd[1]`
+        
         await agent.attemptsTo(
             Ensure.url().is('summary'),
             Ensure.heading().is('Check your answers'),
-            Ensure.screenMatchesDesign(),
+            Ensure.screenMatchesDesign().ignoring(datePartsFieldValueXPath),
             Continue.journey(),
         )
     })
@@ -182,10 +187,12 @@ describe('example-grant-with-auth', () => {
     })
 
     it('confirmation', async () => {
+        const referenceNumberXPath = '//h1/following-sibling::div[1]/strong'
+
         await agent.attemptsTo(
             Ensure.url().is('confirmation'),
             Ensure.heading().is('Details submitted'),
-            Ensure.screenMatchesDesign().ignoring('//h1/following-sibling::div[1]/strong') // reference number element
+            Ensure.screenMatchesDesign().ignoring(referenceNumberXPath)
         )
     })
 })

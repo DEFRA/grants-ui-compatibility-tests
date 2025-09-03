@@ -18,7 +18,7 @@ export const config = {
   runner: 'local',
   specs: ['./test/specs/*.spec.js'],
   exclude: [],
-  maxInstances: 12,
+  maxInstances: 3,
   commonCapabilities: {
     'bstack:options': {
       buildName: `grants-ui-compatibility-tests-${process.env.ENVIRONMENT}`

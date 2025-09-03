@@ -2,16 +2,16 @@ import path from 'node:path'
 import { expect } from 'chai'
 
 export default class EnsureSnapshot {
-    ignoredLocators = []
+    ignoredXPaths = []
 
-    ignoring(locator) {
-        this.ignoredLocators.push(locator)
+    ignoring(xpath) {
+        this.ignoredXPaths.push(xpath)
         return this
     }
 
     async perform() {
-        for (const locator of this.ignoredLocators) {
-            const wdioElement = await $(locator)
+        for (const xpath of this.ignoredXPaths) {
+            const wdioElement = await $(xpath)
             await browser.execute((e) => { e.style.visibility = 'hidden' }, wdioElement)
         }
 

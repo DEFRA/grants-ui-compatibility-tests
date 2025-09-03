@@ -9,7 +9,7 @@ export const config = {
   runner: 'local',
   specs: ['./test/specs/*.spec.js'],
   exclude: [],
-  maxInstances: 11,
+  maxInstances: 3,
   capabilities: browserStackCapabilities,
   services: [
     [
