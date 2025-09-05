@@ -108,20 +108,20 @@ export const browserStackCapabilities = [
     }
   },
   // iOS
-  // {
-  //   browserName: 'Chrome',
-  //   'wdio-ics:options': {
-  //     logName: 'ios-chrome',
-  //     defraIdSbi: '106804575',
-  //     defraIdCrn: '1101064064'
-  //   },
-  //   'bstack:options': {
-  //     idleTimeout: 300,
-  //     deviceOrientation: 'portrait',
-  //     deviceName: 'iPhone 16',
-  //     osVersion: '18'
-  //   }
-  // },
+  {
+    browserName: 'Chrome',
+    'wdio-ics:options': {
+      logName: 'ios-chrome',
+      defraIdSbi: '106804575',
+      defraIdCrn: '1101064064'
+    },
+    'bstack:options': {
+      idleTimeout: 300,
+      deviceOrientation: 'portrait',
+      deviceName: 'iPhone 16',
+      osVersion: '18'
+    }
+  },
   {
     browserName: 'Safari',
     'wdio-ics:options': {

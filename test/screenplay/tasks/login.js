@@ -32,11 +32,17 @@ export default class Login {
             await submitButton.waitForDisplayed({ timeout: 30000 })
             await browser.waitUntil(() => submitButton.isClickable())
             await submitButton.click()
+
             if (browser.options.capabilities['wdio-ics:options']?.logName === 'android-chrome') {
                 await submitButton.click()
             }
 
             await expect(browser).not.toHaveUrl(expect.stringContaining('b2clogin.com'), { wait: 30000 })
+
+            if (browser.options.capabilities['wdio-ics:options']?.logName === 'ios-chrome') {
+                // allow password manager to close
+                await new Promise((resolve) => setTimeout(resolve, 15000))
+            }
         }
     }
 }
