@@ -13,9 +13,12 @@ export default class SelectAutocompleteField {
         const inputSelector = $(`//label[contains(text(),'${this.label}')]/following::input[@type='text']`)
         const optionSelector = $(`//label[contains(text(),'${this.label}')]/following::ul/li[text()='${this.option}']`)
 
-        await inputSelector.click()
-        await browser.keys('Backspace')
-        await inputSelector.setValue(this.option)
-        await optionSelector.click()
+        const currentSelectedValue = await inputSelector.getValue()
+        if (currentSelectedValue !== this.option) {
+            await inputSelector.click()
+            await browser.keys('Backspace')
+            await inputSelector.setValue(this.option)
+            await optionSelector.click()
+        }
     }
 }
